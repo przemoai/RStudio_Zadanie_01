@@ -1,17 +1,34 @@
-# Instalacja i załadowanie pakietu plotrix
+# Instalacja i załadowanie pakietów
+
 library(latticeExtra)
-library(plotrix)
 
-data(USAge.df)
+# Przykładowe dane (możesz je dostosować do rzeczywistych danych)
+data(USAge.df, package = "latticeExtra")
 
+# Wybieramy dane dla roku 1961
+data_1961 <- USAge.df[USAge.df$Year == 1961, ]
 
-# Tworzenie danych do piramidy demograficznej dla roku 1961
+# Kategorie wiekowe
 wiek <- c("0-5", "6-11", "12-17", "18-23", "24-29", "30-35", "36-41",
           "42-47", "48-53", "54-59", "60-65", "66-71", "72 i więcej")
-mężczyźni <- c(100, 90, 80, 70, 60, 50, 40, 30, 20, 10, 5, 2, 1)
-kobiety <- c(95, 85, 75, 65, 55, 45, 35, 25, 15, 10, 5, 2, 1)
 
-# Rysowanie piramidy demograficznej z większym odstępem między wykresami
-pyramid.plot(mężczyźni, kobiety, labels=wiek, main="Piramida demograficzna - 1961",
-             lxcol="blue", rxcol="pink", gap=8, 
-             top.labels=c("Mężczyźni", "Kobiety"))
+# Tworzymy kategorie wiekowe i przypisujemy do nowej kolumny 'KategoriaWieku'
+wiek_kategorie <- cut(data_1961$Age, breaks = c(0, 5, 11, 17, 23, 29, 35, 41, 47, 53, 59, 65, 71, Inf),
+                      labels = wiek, include.lowest = TRUE)
+
+data_1961$KategoriaWieku <- factor(as.character(wiek_kategorie), levels = wiek)
+
+# Dzielimy dane na mężczyzn i kobiety
+mężczyźni <- data_1961[data_1961$Sex == "Male", ]
+kobiety <- data_1961[data_1961$Sex == "Female", ]
+
+# Zsumuj liczbę mężczyzn i kobiet w każdej kategorii wiekowej
+sum_mężczyźni <- aggregate(Population ~ KategoriaWieku, data = mężczyźni, sum)
+sum_kobiety <- aggregate(Population ~ KategoriaWieku, data = kobiety, sum)
+
+# Narysuj wykres piramidowy ilustrujący zsumowaną liczbę mężczyzn i kobiet w danej kategorii wiekowej
+pyramid.plot(sum_mężczyźni$Population, sum_kobiety$Population,
+             lxcol = "blue", rxcol = "pink", gap = 1.5,
+             labels = sum_mężczyźni$KategoriaWieku,
+             top.labels = c("Mężczyźni","Wiek", "Kobiety"),
+             main = "Zsumowana Liczba Mężczyzn i Kobiet w Danej Kategorii Wiekowej")
