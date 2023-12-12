@@ -1,32 +1,30 @@
-# Instalacja i załadowanie pakietów
-
 library(latticeExtra)
+library(plotrix)
 
-# Przykładowe dane (możesz je dostosować do rzeczywistych danych)
 data(USAge.df, package = "latticeExtra")
 
-# Wybieramy dane dla roku 1961
-data_1961 <- USAge.df[USAge.df$Year == 1961, ]
+# Dane dla roku 1961
+data_1961 = USAge.df[USAge.df$Year == 1961, ]
 
 # Kategorie wiekowe
-wiek <- c("0-5", "6-11", "12-17", "18-23", "24-29", "30-35", "36-41",
+wiek = c("0-5", "6-11", "12-17", "18-23", "24-29", "30-35", "36-41",
           "42-47", "48-53", "54-59", "60-65", "66-71", "72 i więcej")
 
-# Tworzymy kategorie wiekowe i przypisujemy do nowej kolumny 'KategoriaWieku'
-wiek_kategorie <- cut(data_1961$Age, breaks = c(0, 5, 11, 17, 23, 29, 35, 41, 47, 53, 59, 65, 71, Inf),
+# Kategoryzacja wieku
+wiek_kategorie = cut(data_1961$Age, breaks = c(0, 5, 11, 17, 23, 29, 35, 41, 47, 53, 59, 65, 71, Inf),
                       labels = wiek, include.lowest = TRUE)
 
-data_1961$KategoriaWieku <- factor(as.character(wiek_kategorie), levels = wiek)
+data_1961$KategoriaWieku = factor(as.character(wiek_kategorie), levels = wiek)
 
-# Dzielimy dane na mężczyzn i kobiety
-mężczyźni <- data_1961[data_1961$Sex == "Male", ]
-kobiety <- data_1961[data_1961$Sex == "Female", ]
+# Podział na mężczyzn i kobiety
+mężczyźni = data_1961[data_1961$Sex == "Male", ]
+kobiety = data_1961[data_1961$Sex == "Female", ]
 
-# Zsumuj liczbę mężczyzn i kobiet w każdej kategorii wiekowej
-sum_mężczyźni <- aggregate(Population ~ KategoriaWieku, data = mężczyźni, sum)
-sum_kobiety <- aggregate(Population ~ KategoriaWieku, data = kobiety, sum)
+# Zsumowanie liczby mężczyzn i kobiet w każdej kategorii wiekowej
+sum_mężczyźni = aggregate(Population ~ KategoriaWieku, data = mężczyźni, sum)
+sum_kobiety = aggregate(Population ~ KategoriaWieku, data = kobiety, sum)
 
-# Narysuj wykres piramidowy ilustrujący zsumowaną liczbę mężczyzn i kobiet w danej kategorii wiekowej
+# Wykres piramidowy ilustrujący zsumowaną liczbę mężczyzn i kobiet w danej kategorii wiekowej
 pyramid.plot(sum_mężczyźni$Population, sum_kobiety$Population,
              lxcol = "blue", rxcol = "pink", gap = 1.5,
              labels = sum_mężczyźni$KategoriaWieku,

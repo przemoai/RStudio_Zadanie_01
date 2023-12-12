@@ -2,11 +2,11 @@
 gole = c(0, 1, 2, 3, 4, 5, 6, 7)
 mecze = c(5, 7, 16, 14, 6, 3, 1, 1)
 
-# (a) Oszacowanie parametrów rozkładu Poissona
+# Oszacowanie parametrów rozkładu Poissona
 N = sum(mecze)
 lambda = sum(gole * mecze) / N
 
-# (b) Wygenerowanie funkcji masy prawdopodobieństwa dla rozkładu Poissona
+# Wygenerowanie funkcji masy prawdopodobieństwa dla rozkładu Poissona
 poisson_pmf = dpois(gole, lambda)
 
 # Wykres porównawczy
